@@ -1,0 +1,86 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/kbc/.kbc" ]; then
+	KBCD_DEFAULT_DATADIR="/var/lib/kbc/.kbc"
+else
+	KBCD_DEFAULT_DATADIR="/var/lib/kbcd"
+fi
+
+KBCD_CONFIGFILE=${KBCD_CONFIGFILE:-/etc/kbc/kbc.conf}
+KBCD_PIDDIR=${KBCD_PIDDIR:-/var/run/kbcd}
+KBCD_PIDFILE=${KBCD_PIDFILE:-${KBCD_PIDDIR}/kbcd.pid}
+KBCD_DATADIR=${KBCD_DATADIR:-${KBCD_DEFAULT_DATADIR}}
+KBCD_USER=${KBCD_USER:-kbc}
+KBCD_GROUP=${KBCD_GROUP:-kbc}
+KBCD_BIN=${KBCD_BIN:-/usr/bin/kbcd}
+
+name="Kbc Core Daemon"
+description="Kbc crypto-currency p2p network daemon"
+
+command="/usr/bin/kbcd"
+command_args="-pid=\"${KBCD_PIDFILE}\" \
+		-conf=\"${KBCD_CONFIGFILE}\" \
+		-datadir=\"${KBCD_DATADIR}\" \
+		-daemon \
+		${KBCD_OPTS}"
+
+required_files="${KBCD_CONFIGFILE}"
+start_stop_daemon_args="-u ${KBCD_USER} \
+			-N ${KBCD_NICE:-0} -w 2000"
+pidfile="${KBCD_PIDFILE}"
+retry=60
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${KBCD_USER}:${KBCD_GROUP}" \
+	"${KBCD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${KBCD_USER}:${KBCD_GROUP}" \
+	"${KBCD_PIDDIR}"
+
+	checkpath -f \
+	-o ${KBCD_USER}:${KBCD_GROUP} \
+	-m 0660 \
+	${KBCD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${KBCD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run kbcd."
+		eerror "The setting must appear in ${KBCD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Kbc Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

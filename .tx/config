@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[kbc.qt-translation-010x]
+file_filter = src/qt/locale/kbc_<lang>.ts
+source_file = src/qt/locale/kbc_en.ts
+source_lang = en

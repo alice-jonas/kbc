@@ -1,0 +1,22 @@
+[Unit]
+Description=Kbc's distributed currency daemon
+After=network.target
+
+[Service]
+User=kbc
+Group=kbc
+
+Type=forking
+PIDFile=/var/lib/kbcd/kbcd.pid
+ExecStart=/usr/bin/kbcd -daemon -pid=/var/lib/kbcd/kbcd.pid \
+-conf=/etc/kbc/kbc.conf -datadir=/var/lib/kbcd -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+# /etc/conf.d/kbcd: config file for /etc/init.d/kbcd
+
+# Config file location
+#KBCD_CONFIGFILE="/etc/kbc/kbc.conf"
+
+# What directory to write pidfile to?  (created and owned by $KBCD_USER)
+#KBCD_PIDDIR="/var/run/kbcd"
+
+# What filename to give the pidfile
+#KBCD_PIDFILE="${KBCD_PIDDIR}/kbcd.pid"
+
+# Where to write kbcd data (be mindful that the blockchain is large)
+#KBCD_DATADIR="/var/lib/kbcd"
+
+# User and group to own kbcd process
+#KBCD_USER="kbc"
+#KBCD_GROUP="kbc"
+
+# Path to kbcd executable
+#KBCD_BIN="/usr/bin/kbcd"
+
+# Nice value to run kbcd under
+#KBCD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+KBCD_OPTS="-disablewallet"
+

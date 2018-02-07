@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Kbc
+Comment=Kbc P2P Cryptocurrency
+Comment[fr]=Kbc, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Kbc, eşten eşe kriptografik sanal para birimi
+Exec=kbc-qt %u
+Terminal=false
+Type=Application
+Icon=kbc128
+MimeType=x-scheme-handler/kbc;
+Categories=Office;Finance;
