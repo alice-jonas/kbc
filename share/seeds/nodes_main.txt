@@ -2,6 +2,7 @@
 
 # IPv4 nodes (generated using contrib/seeds/makeseeds.py)
 13.250.120.93
+42.200.206.193
 54.169.12.248
 54.169.137.5
 54.255.148.122
